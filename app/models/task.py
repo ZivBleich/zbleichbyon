@@ -1,7 +1,7 @@
+import uuid
 from pydantic import BaseModel, Field
-from typing import Optional
 from enum import Enum
-from uuid import uuid4
+from typing import Optional
 
 
 class Status(str, Enum):
@@ -13,5 +13,4 @@ class Task(BaseModel):
     title: str
     description: str
     status: Status
-    id: str = Field(default_factory=uuid4)
-
+    id: Optional[str] = Field(default_factory=uuid.uuid4, alias="_id")
