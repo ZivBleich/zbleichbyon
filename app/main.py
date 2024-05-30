@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from .routers.tasks import task_router
+from storage.storage_connector import MongoStorageConnector
 from pymongo import MongoClient
 
 URI = "mongodb://localhost:27017"
@@ -10,13 +11,12 @@ app = FastAPI()
 
 @app.on_event("startup")
 def startup_db_client():
-    app.mongodb_client = MongoClient(URI)
-    app.database = app.mongodb_client[DB_NAME]
+    app.storage_connector = MongoStorageConnector(MongoClient(URI), db_name=DB_NAME)
 
 
 @app.on_event("shutdown")
 def shutdown_db_client():
-    app.mongodb_client.close()
+    app.storage_connector.close()
 
 
 app.include_router(task_router)
