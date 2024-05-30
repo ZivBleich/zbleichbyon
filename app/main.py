@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from .routers.tasks import task_router
-from storage.storage_connector import MongoStorageConnector
+from storage.mongo_storage_connector import MongoStorageConnector
 from pymongo import MongoClient
 
 URI = "mongodb://localhost:27017"
