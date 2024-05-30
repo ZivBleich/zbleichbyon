@@ -20,26 +20,12 @@ async def ping():
     return "pong"
 
 
-# @task_router.post(f"{BASE_PATH}/tasks", response_model=Task)
-# async def create_task(request: Request, task: Task):
-#     task = await request.app.async_database[TASK_COLLECTION].insert_one(jsonable_encoder(task))
-#     task.id = str(task.id)
-#     logger.info(task)
-#     return task
 @task_router.post(f"{BASE_PATH}/tasks", response_model=Task)
 def create_task(request: Request, task: Task):
     insert_obj = request.app.database[TASK_COLLECTION].insert_one(jsonable_encoder(task))
     return request.app.database[TASK_COLLECTION].find_one(
         {"_id": insert_obj.inserted_id}
     )
-
-# @task_router.get(f"{BASE_PATH}/tasks", response_model=List[Task])
-# async def list_tasks(request: Request):
-#     cursor = request.app.async_database[TASK_COLLECTION].find()
-#     tasks = []
-#     for task in await cursor.to_list(length=100):
-#         tasks.append(task)
-#     return tasks
 
 
 @task_router.get(f"{BASE_PATH}/tasks", response_model=List[Task])
