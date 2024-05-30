@@ -12,7 +12,7 @@ class Task(BaseModel):
     title: str
     description: str
     status: Status
-    id: Optional[str]
+    id: str = None
 
 
 class TaskUpdate(BaseModel):

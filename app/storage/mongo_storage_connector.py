@@ -51,12 +51,13 @@ class MongoStorageConnector(StorageConnector):
 
     @_mongo_id_str_converter
     def update_one(self, collection_name: str, document_id: str, document: BaseModel) -> dict:
-        self.find_one(collection_name, document_id)
+        stored_document = self.find_one(collection_name, document_id)
         # filter fields according to model
         document = {k: v for k, v in document.model_dump().items() if v is not None}
         if document:
             self.db[collection_name].update_one({"_id": ObjectId(document_id)}, {"$set": document})
-        return self.find_one(collection_name, document_id)
+        stored_document.update(document)
+        return stored_document
 
     @_mongo_id_str_converter
     def delete_one(self, collection_name: str, document_id: str):
@@ -68,5 +69,5 @@ class MongoStorageConnector(StorageConnector):
     def insert_one(self, collection_name: str, document: BaseModel):
         dumped = document.model_dump()
         dumped.pop("id", None)
-        insert_obj = self.db[collection_name].insert_one(dumped)
-        return self.find_one(collection_name, str(insert_obj.inserted_id))
+        dumped["_id"] = self.db[collection_name].insert_one(dumped).inserted_id
+        return dumped
